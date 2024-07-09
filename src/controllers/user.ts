@@ -1,7 +1,6 @@
 import express from "express";
-import { loginWithPhoneNumber } from "../services/login.service";
-import { getAuth } from "firebase/auth";
-import { firebaseApp } from "../configs/database";
+import { FIND_USER, GITHUB_BASE_URL } from "../utils/url";
+
 const router = express.Router();
 
 const users = [
@@ -17,20 +16,38 @@ const users = [
   },
 ];
 
-router.post("/login-phone", async (req, res) => {
+router.get("/search-user", async (req, res) => {
   try {
-    await loginWithPhoneNumber(req.body.phoneNumber);
-
     res.send(users);
   } catch (error) {
     res.send(error);
   }
 });
 
-router.post("/login-code", (req, res) => {
-  //   loginWithPhoneNumber(req.body.phoneNumber);
+router.get("/search-user-id", async (req, res) => {
+  const { id } = req.query;
+  try {
+    const data = await fetch(GITHUB_BASE_URL + FIND_USER);
+    res.send(users);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
-  res.send(users);
+router.get("/profile", async (req, res) => {
+  try {
+    res.send(users);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.post("/liked-profile", async (req, res) => {
+  try {
+    res.send(users);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 export default router;
