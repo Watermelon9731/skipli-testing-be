@@ -1,5 +1,5 @@
 import express from "express";
-import { loginWithPhoneNumber, verifyOTP } from "../services/login.service";
+import { loginWithPhoneNumber, verifyAccessCode } from "../services/login.service";
 const router = express.Router();
 
 router.post("/access-code", async (req, res) => {
@@ -13,7 +13,7 @@ router.post("/access-code", async (req, res) => {
 
 router.post("/verify-access-code", async (req, res) => {
   try {
-    const result = await verifyOTP(req.body);
+    const result = await verifyAccessCode(req.body);
     res.send(result);
   } catch (error) {
     res.send(error);

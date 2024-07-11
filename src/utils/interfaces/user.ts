@@ -1,5 +1,5 @@
 export interface UserInterface {
-  userId: string;
+  user_id: string;
   phone_number: string;
   access_code: string;
 }

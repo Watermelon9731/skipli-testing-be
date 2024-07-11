@@ -7,7 +7,7 @@ import {
   query,
   setDoc,
   updateDoc,
-  where
+  where,
 } from "firebase/firestore";
 import { db } from "../configs/database";
 import { vonage } from "../configs/vonage";
@@ -29,17 +29,18 @@ export const loginWithPhoneNumber = async (phoneNumber: string) => {
     const docSnap = await getDocs(searchQuery);
     docSnap.forEach((doc: DocumentData) => {
       const user = doc.data();
-      data.push({ ...user, userId: doc.id });
+      data.push({ ...user, user_id: doc.id });
     });
 
     if (data.length <= 0) {
       const newDocRef = doc(usersCollection);
       await setDoc(newDocRef, {
+        user_id: newDocRef.id,
         phone_number: phoneNumber,
         access_code: otp,
       });
     } else {
-      const userRef = doc(db, "users", data[0].userId);
+      const userRef = doc(db, "users", data[0].user_id);
       await updateDoc(userRef, { access_code: otp });
     }
 
@@ -48,20 +49,25 @@ export const loginWithPhoneNumber = async (phoneNumber: string) => {
 
     console.log("OTP sent successfully");
 
-    return { message: status, userId: data[0].userId };
+    return { message: status, userId: data[0].user_id };
   } catch (error) {
     console.log(error);
     return error;
   }
 };
 
-export const verifyOTP = async (user: { userId: string; otp: string }) => {
+export const verifyAccessCode = async (user: {
+  userId: string;
+  accessCode: string;
+  phoneNumber: string;
+}) => {
   const data: UserInterface[] = [];
   const searchQuery = query(
     usersCollection,
     and(
-      where("userId", "==", user.userId),
-      where("access_code", "==", user.otp)
+      where("user_id", "==", user.userId),
+      where("access_code", "==", user.accessCode),
+      where("phone_number", "==", user.phoneNumber)
     )
   );
   try {
