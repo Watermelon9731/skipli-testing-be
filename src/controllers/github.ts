@@ -20,11 +20,13 @@ router.get("/search-user", async (req, res) => {
   }
 });
 
-router.get("/search-user-id", async (req, res) => {
-  const { id } = req.query;
+router.post("/search-user-id", async (req, res) => {
   try {
-    const data = await fetch(GITHUB_BASE_URL + FIND_USER);
-    res.send();
+    const data = await fetch(
+      GITHUB_BASE_URL + FIND_USER + `${req.body.userId}`
+    );
+    const result = await data.json();
+    res.send(result);
   } catch (error) {
     res.send(error);
   }
