@@ -4,6 +4,7 @@ import {
   collection,
   doc,
   DocumentData,
+  getDoc,
   getDocs,
   query,
   setDoc,
@@ -41,6 +42,20 @@ export const addFavoriteProfile = async (
 
   try {
     await updateDoc(favoriteRef, { profiles: arrayUnion(profileItem) });
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+export const getUserProfile = async (userId: string) => {
+  const userRef = doc(db, "users", userId);
+  try {
+    const user = await getDoc(userRef);
+    if (user.exists()) {
+      return user.data();
+    }
+    return {};
   } catch (error) {
     console.log(error);
     return error;

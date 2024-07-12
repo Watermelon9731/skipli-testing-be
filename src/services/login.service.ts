@@ -39,7 +39,7 @@ export const loginWithPhoneNumber = async (phoneNumber: string) => {
     if (data.length <= 0) {
       const newFavoriteDocRef = doc(favoritesCollection);
       const newUserDocRef = doc(usersCollection);
-      
+
       const newFavoriteDoc: EntityFavorite = {
         favorite_id: newFavoriteDocRef.id,
         user_id: newUserDocRef.id,
@@ -60,12 +60,12 @@ export const loginWithPhoneNumber = async (phoneNumber: string) => {
       await updateDoc(userRef, { access_code: otp });
     }
 
-    // const message = { to: phoneNumber, from: src, text: otp, type: "unicode" };
-    // const status = await vonage.sms.send(message);
+    const message = { to: phoneNumber, from: src, text: otp, type: "unicode" };
+    const status = await vonage.sms.send(message);
 
     console.log("OTP sent successfully");
 
-    // return { message: status, userId: data[0].user_id };
+    return { message: status, userId: data[0].user_id };
   } catch (error) {
     console.log(error);
     return error;
@@ -86,7 +86,9 @@ export const verifyAccessCode = async (user: {
       where("phone_number", "==", user.phoneNumber)
     )
   );
+  const userRef = doc(db, "users", user.userId);
   try {
+    await updateDoc(userRef, { accesss_code: "" });
     const docSnap = await getDocs(searchQuery);
     docSnap.forEach((doc: DocumentData) => {
       const user = doc.data();

@@ -2,6 +2,7 @@ import express from "express";
 import {
   addFavoriteProfile,
   getFavoriteProfiles,
+  getUserProfile,
 } from "../services/user.service";
 const router = express.Router();
 
@@ -18,6 +19,15 @@ router.post("/liked", async (req, res) => {
   try {
     await addFavoriteProfile(req.body.favoriteId, req.body.payload);
     res.send({ message: "Successfully", data: req.body.payload });
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.post("/profile", async (req, res) => {
+  try {
+    const result = await getUserProfile(req.body.userId);
+    res.send(result);
   } catch (error) {
     res.send(error);
   }
