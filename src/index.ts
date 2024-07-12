@@ -4,7 +4,8 @@ dotenv.config();
 import cors from "cors";
 
 import loginRoutes from "./controllers/login";
-import userRoutes from "./controllers/github";
+import githubRoutes from "./controllers/github";
+import userRoutes from "./controllers/user";
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
@@ -25,7 +26,9 @@ app.use(
 
 app.use("/login", loginRoutes);
 
-app.use("/github", userRoutes);
+app.use("/github", githubRoutes);
+
+app.use("/user", userRoutes);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

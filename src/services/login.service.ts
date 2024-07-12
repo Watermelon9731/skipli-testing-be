@@ -12,9 +12,13 @@ import {
 import { db } from "../configs/database";
 import { vonage } from "../configs/vonage";
 import { UserInterface } from "../utils/interfaces/user";
+import { profile } from "console";
+import { EntityFavorite } from "../entities/favorite.entity";
+import { EntityUser } from "../entities/user.entity";
 
 const testNumber = "84353526385";
 const usersCollection = collection(db, "users");
+const favoritesCollection = collection(db, "favorites");
 
 export const loginWithPhoneNumber = async (phoneNumber: string) => {
   const data: UserInterface[] = [];
@@ -33,23 +37,35 @@ export const loginWithPhoneNumber = async (phoneNumber: string) => {
     });
 
     if (data.length <= 0) {
-      const newDocRef = doc(usersCollection);
-      await setDoc(newDocRef, {
-        user_id: newDocRef.id,
+      const newFavoriteDocRef = doc(favoritesCollection);
+      const newUserDocRef = doc(usersCollection);
+      
+      const newFavoriteDoc: EntityFavorite = {
+        favorite_id: newFavoriteDocRef.id,
+        user_id: newUserDocRef.id,
+        profiles: [],
+      };
+
+      const newUserDoc: EntityUser = {
+        user_id: newUserDocRef.id,
         phone_number: phoneNumber,
         access_code: otp,
-      });
+        favorite_id: newFavoriteDocRef.id,
+      };
+
+      await setDoc(newFavoriteDocRef, newFavoriteDoc);
+      await setDoc(newUserDocRef, newUserDoc);
     } else {
       const userRef = doc(db, "users", data[0].user_id);
       await updateDoc(userRef, { access_code: otp });
     }
 
-    const message = { to: phoneNumber, from: src, text: otp, type: "unicode" };
-    const status = await vonage.sms.send(message);
+    // const message = { to: phoneNumber, from: src, text: otp, type: "unicode" };
+    // const status = await vonage.sms.send(message);
 
     console.log("OTP sent successfully");
 
-    return { message: status, userId: data[0].user_id };
+    // return { message: status, userId: data[0].user_id };
   } catch (error) {
     console.log(error);
     return error;

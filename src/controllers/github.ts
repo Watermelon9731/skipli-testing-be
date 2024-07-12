@@ -32,20 +32,4 @@ router.post("/search-user-id", async (req, res) => {
   }
 });
 
-router.get("/profile", async (req, res) => {
-  try {
-    res.send();
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-router.post("/liked-profile", async (req, res) => {
-  try {
-    res.send();
-  } catch (error) {
-    res.send(error);
-  }
-});
-
 export default router;
