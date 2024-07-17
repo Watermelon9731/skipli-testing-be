@@ -3,7 +3,9 @@ import {
   addFavoriteProfile,
   getFavoriteProfiles,
   getUserProfile,
+  removeFavoriteProfile,
 } from "../services/user.service";
+import { EntityFavorite } from "../entities/favorite.entity";
 const router = express.Router();
 
 router.post("/favorite", async (req, res) => {
@@ -17,8 +19,25 @@ router.post("/favorite", async (req, res) => {
 
 router.post("/liked", async (req, res) => {
   try {
-    await addFavoriteProfile(req.body.favoriteId, req.body.payload);
-    res.send({ message: "Successfully", data: req.body.payload });
+    const result = await addFavoriteProfile(
+      req.body.favoriteId,
+      req.body.payload
+    );
+    if (!result) return res.send({ message: "Fail to add" });
+    res.send({ message: "Added", data: result });
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.post("/liked-remove", async (req, res) => {
+  try {
+    const result = await removeFavoriteProfile(
+      req.body.favoriteId,
+      req.body.payload
+    );
+    if (!result) return res.send({ message: "Fail to remove" });
+    res.send({ message: "Removed", data: result });
   } catch (error) {
     res.send(error);
   }

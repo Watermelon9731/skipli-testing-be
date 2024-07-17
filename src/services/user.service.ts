@@ -1,5 +1,6 @@
 import {
   and,
+  arrayRemove,
   arrayUnion,
   collection,
   doc,
@@ -41,11 +42,33 @@ export const addFavoriteProfile = async (
   const favoriteRef = doc(db, "favorites", favoriteId);
 
   try {
-    await updateDoc(favoriteRef, { profiles: arrayUnion(profileItem) });
+    await updateDoc(favoriteRef, {
+      profiles: arrayUnion(profileItem),
+    });
+    const result = await getDoc(favoriteRef);
+    if (result.exists()) {
+      return result.data();
+    }
   } catch (error) {
     console.log(error);
     return error;
   }
+};
+
+export const removeFavoriteProfile = async (
+  favoriteId: string,
+  profileItem: EntityFavoriteProfile
+) => {
+  const favoriteRef = doc(db, "favorites", favoriteId);
+  try {
+    await updateDoc(favoriteRef, {
+      profiles: arrayRemove(profileItem),
+    });
+    const result = await getDoc(favoriteRef);
+    if (result.exists()) {
+      return result.data();
+    }
+  } catch (error) {}
 };
 
 export const getUserProfile = async (userId: string) => {

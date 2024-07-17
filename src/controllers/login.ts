@@ -1,5 +1,8 @@
 import express from "express";
-import { loginWithPhoneNumber, verifyAccessCode } from "../services/login.service";
+import {
+  loginWithPhoneNumber,
+  verifyAccessCode,
+} from "../services/login.service";
 const router = express.Router();
 
 router.post("/access-code", async (req, res) => {

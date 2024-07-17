@@ -63,6 +63,8 @@ export const loginWithPhoneNumber = async (phoneNumber: string) => {
     const message = { to: phoneNumber, from: src, text: otp, type: "unicode" };
     const status = await vonage.sms.send(message);
 
+    console.log(phoneNumber, otp);
+
     console.log("OTP sent successfully");
 
     return { message: status, userId: data[0].user_id };
@@ -88,13 +90,13 @@ export const verifyAccessCode = async (user: {
   );
   const userRef = doc(db, "users", user.userId);
   try {
-    await updateDoc(userRef, { accesss_code: "" });
     const docSnap = await getDocs(searchQuery);
     docSnap.forEach((doc: DocumentData) => {
       const user = doc.data();
       if (!user) return;
       data.push(user);
     });
+    await updateDoc(userRef, { access_code: "" });
     return data;
   } catch (error) {
     console.log(error);
